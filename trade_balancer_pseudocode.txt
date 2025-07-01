@@ -1,0 +1,47 @@
+# find the best trade of give_n vs get_n players
+function find_best_trade(teamA, teamB, give_n, get_n):
+  # start with a very large score
+  best_score = infinity
+  # will hold the winning combo
+  best_trade = none
+
+  # try each group of give_n players from your team
+  for give_group in combinations(teamA, give_n):
+    # try each group of get_n players from opponent
+    for get_group in combinations(teamB, get_n):
+      # compute trade score for this pair
+      score, details = score_trade(give_group, get_group)
+
+      # if this trade is better (lower score), keep it
+      if score < best_score:
+        # update best_score
+        best_score = score
+        # update best_trade
+        best_trade = (give_group, get_group, details)
+
+  # return the winning players + extra details
+  return best_trade
+
+# score how good a trade is for you
+function score_trade(give_group, get_group):
+  # calculate rating gain (you get minus you give)
+  rating_gain = sum(get_group.ratings) - sum(give_group.ratings)
+
+  # calculate efficiency gain (OVR per salary difference)
+  efficiency_gain = (sum(get_group.ratings)/sum(get_group.salaries))
+                  - (sum(give_group.ratings)/sum(give_group.salaries))
+
+  # find rookie players you’d get (cheap but high OVR)
+  rookies = players in get_group with (contract ≥ 3 and salary < rating)
+  # penalty is 2 points per rookie
+  penalty = count(rookies) * 2
+
+  # combine into score: lower is better for you
+  score = (-rating_gain) + (-efficiency_gain * 5) + penalty
+
+  # return both score and details for verdict
+  return score, {
+    'rating_gain': rating_gain,
+    'efficiency_gain': efficiency_gain,
+    'rookies': rookies.names
+  }
