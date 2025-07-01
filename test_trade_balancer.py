@@ -1,5 +1,3 @@
-# test_trade_balancer.py
-
 import unittest
 from trade_balancer import find_best_trade
 
