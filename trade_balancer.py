@@ -38,7 +38,7 @@ def score_trade(give_group, get_group):
     # find rookies (cheap but high rating is the give away) and apply penalty
     rookies = [p['name'] for p in get_group
                if p['contract'] >= 3 and p['salary'] < p['rating']]
-    rookie_penalty = len(rookies) * 2
+    rookie_penalty = len(rookies) * 4
 
     # combine into a score (lower is better for you)
     score = (-rating_gain) + (-efficiency_gain * 5) + rookie_penalty
